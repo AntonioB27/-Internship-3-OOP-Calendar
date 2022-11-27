@@ -71,7 +71,8 @@ bool PrintActiveEvents()
         {
 
             var hour =i.DateEnd.Date - DateTime.Now.Date;
-            Console.WriteLine($"Tren5utno aktivni event:\n" +
+            Console.WriteLine($"Trenutno aktivni event:\n" +
+                $"ID:{i.Id}\n"+
                 $"Ime:{i.Name}\n" +
                 $"Lokacija: {i.Location}\n" +
                 $"Sati do zavrsetka: {Math.Round((decimal)hour.Days*24,1)}\n" +
@@ -198,6 +199,83 @@ bool PrintPastEvents()
     return true;
 }
 
+bool SetPresenceToPerson()
+{
+    Console.WriteLine("Unesite ID eventa kojem zelite zabiljezavati prisutnost ljudi:");
+    var id = Console.ReadLine();
+    foreach(var e in listOfEvents)
+    {
+        if(e.Id.ToString() == id)
+        {
+            Console.WriteLine("Upisite mail osobe ciju prisutnost zelite zabiljeziti:");
+            var mail = Console.ReadLine();
+            foreach(var m in e.Emails)
+            {
+                if (m == mail)
+                {
+                    foreach(var person in listOfPersons)
+                    {
+                        if(person.Mail == mail)
+                        {
+                            Console.WriteLine("Unesite true ako je osoba bila prisutna, false ako nije:");
+                            var boolean = bool.Parse(Console.ReadLine());
+                            person.SetPresence(e, boolean, person.GetPresence());
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool CreateNewEvent()
+{
+
+    Console.WriteLine("\nUnesite ime novog eventa:");
+    var eventName = Console.ReadLine();
+    Console.WriteLine("Unesite lokaciju eventa:");
+    var eventLocation = Console.ReadLine();
+    Console.Write("Unesite mjesec pocetka eventa: ");
+    int month = int.Parse(Console.ReadLine());
+    Console.Write("Unesite dan pocetka eventa: ");
+    int day = int.Parse(Console.ReadLine());
+    Console.Write("Unesie godinu pocetka eventa: ");
+    int year = int.Parse(Console.ReadLine());
+
+    var eventStartDate = new DateTime(year, month, day);
+
+    Console.Write("Unesite mjesec kraja eventa: ");
+    int monthEnd = int.Parse(Console.ReadLine());
+    Console.Write("Unesite dan kraja eventa: ");
+    int dayEnd = int.Parse(Console.ReadLine());
+    Console.Write("Unesie godinu kraja eventa: ");
+    int yearEnd = int.Parse(Console.ReadLine());
+
+    var eventEndDate = new DateTime(year, month, day);
+
+    Console.WriteLine("Unesite mailove svih sudionika na eventu:(odvojite ih zarezom):");
+    var mailsOfEventParticipants = Console.ReadLine();
+    var newListOfMails = mailsOfEventParticipants.Split(" ").ToList();
+
+    foreach(var events in listOfEvents)
+    {
+        if(events.DateStart==eventStartDate&&events.DateEnd==eventEndDate)
+            foreach (var mail in events.Emails)
+            {
+                foreach(var lmail in newListOfMails)
+                {
+                    if (lmail == mail) return false;
+                }
+            }
+    }
+
+    var newEvent = new Event(eventName, eventLocation, eventStartDate, eventEndDate, newListOfMails);
+    return true;
+    
+}
+
 //SystemLoading();
 
 Console.WriteLine("Dobrodosli u aplikaijcu za managanje vasih evenata. Unesite broj za zeljenu akciju:");
@@ -222,7 +300,7 @@ do
                 switch (userInput2)
                 {
                     case 1:
-
+                        SetPresenceToPerson();
                         break;
                     case 0:
                         break;
@@ -269,6 +347,16 @@ do
             if (!PrintPastEvents())
             {
                 Console.WriteLine("Ne postoji niti jedan zavrseni event!\n");
+            }
+            break;
+        case 4:
+            if (CreateNewEvent())
+            {
+                Console.WriteLine("Event dodan!");
+            }
+            else
+            {
+                Console.WriteLine("Event nije dodan!");
             }
             break;
         case 0:

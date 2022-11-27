@@ -34,29 +34,15 @@ namespace ConsoleApp1.Classes
             return listOfPersons;
         }
 
-        public bool SetPresence()
+        public Dictionary<string, bool> GetPresence()
         {
-            Console.WriteLine("Unesite ID eventa na kojem zelite zabiljeziti prisutnost:");
-            string id = Console.ReadLine();
-            foreach(var ev in Events)
-            {
-                if(id == ev.Id.ToString())
-                {
-                    Console.WriteLine("Unesite mail osobe ciju prisutnost zelite zabiljeziti:");
-                    string mail = Console.ReadLine();
-                    foreach(var person in Persons)
-                    {
-                        if(mail == person.Mail)
-                        {
-                            bool pre = bool.Parse(Console.ReadLine());
-                            Presence.Add(id,pre);
-                            Console.WriteLine($"ID:{Presence.ContainsKey(id)},Prisutnost:{Presence.ContainsKey(id)}");
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
+            return Presence;
+        }
+
+        public bool SetPresence(Event event1, bool isPresent, Dictionary<string, bool> Presence)
+        {
+            Presence.Add(event1.Id.ToString(), isPresent);
+            return true;
         }
     }
 

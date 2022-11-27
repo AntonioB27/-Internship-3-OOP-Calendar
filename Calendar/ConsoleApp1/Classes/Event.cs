@@ -25,6 +25,16 @@ namespace ConsoleApp1.Classes
             Emails = new List<string>() { "empty" };
         }
 
+        public Event(string name, string location, DateTime dateStart, DateTime dateEnd, List<string> emails)
+        {
+            Id = Guid.NewGuid();
+            Name = name;
+            Location = location;
+            DateStart = dateStart;
+            DateEnd = dateEnd;
+            Emails = emails;
+        }
+
         public bool SetPeoplesEmails()
         {
             string emails;
